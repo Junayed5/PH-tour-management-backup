@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status-codes";
 import { userServices } from "./user.service";
 import { catchAsync } from "../../utils/catchAsync";
+import { sendResponse } from "../../utils/senResponse";
 
 // const creteUserFunction = async(req:Request, res:Response) => {
 //   const user = await userServices.createUser(req.body);
@@ -44,24 +45,32 @@ const createUser = catchAsync(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async (req: Request, res: Response, next: NextFunction) => {
     const user = await userServices.createUser(req.body);
-
-    res.status(httpStatus.CREATED).json({
+    sendResponse(res, {
       success: true,
+      statusCode: httpStatus.CREATED,
       message: "User Created successfully",
-      user,
+      data: user,
     });
+
+    // res.status(httpStatus.CREATED).json({
+    //   success: true,
+    //   message: "User Created successfully",
+    //   user,
+    // });
   }
 );
 
 const getAllUsers = catchAsync(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async (req: Request, res: Response, next: NextFunction) => {
-    const user = await userServices.getUsers();
+    const result = await userServices.getUsers();
 
-    res.status(httpStatus.OK).json({
+   sendResponse(res, {
       success: true,
-      message: "All Users Retrived  successfully",
-      user,
+      statusCode: httpStatus.OK,
+      message: "All Users retrived successfully",
+      data: result.data,
+      meta: result.meta
     });
   }
 );
