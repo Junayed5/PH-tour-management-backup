@@ -1,6 +1,9 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
 import { router } from "./app/routes";
+import { globalError } from "./middleware/globalErrorHandler";
+// import httpStatus from 'http-status-codes'
+import { notFound } from "./middleware/notFound";
 
 export const app = express();
 app.use(express.json());
@@ -13,3 +16,7 @@ app.get("/", (req: Request, res: Response) => {
     message: "Welcome to Tour management backup",
   });
 });
+
+app.use(globalError);
+
+app.use(notFound)
