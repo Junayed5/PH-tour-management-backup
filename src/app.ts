@@ -1,9 +1,9 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
 import { router } from "./app/routes";
-import { globalError } from "./middleware/globalErrorHandler";
+import { globalError } from "./app/modules/tour/middleware/globalErrorHandler";
+import { notFound } from "./app/modules/tour/middleware/notFound";
 // import httpStatus from 'http-status-codes'
-import { notFound } from "./middleware/notFound";
 
 export const app = express();
 app.use(express.json());
