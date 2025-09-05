@@ -14,11 +14,11 @@ export const globalError = (
   let message = `Something Went Wrong!! ${err.message} global`;
 
   if (err instanceof AppError) {
-    statusCode = err.statusCode
-    message = `${err.message}`
+    statusCode = err.statusCode;
+    message = `${err.message}`;
   } else if (err instanceof Error) {
     statusCode = 500;
-    message = err.message
+    message = err.message;
   }
 
   res.status(statusCode).json({
