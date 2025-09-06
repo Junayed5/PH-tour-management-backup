@@ -24,7 +24,7 @@ export const checkAuth = (... authRole : Role[]) => async (req: Request, res: Re
     if (!authRole.includes(verifiedToken.role)) {
       throw new AppError(403, "You are not accessible to heat this route")
     }
-
+    req.user = verifiedToken;
     next()
 
   } catch (error) {

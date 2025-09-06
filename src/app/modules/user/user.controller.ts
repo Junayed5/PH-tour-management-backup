@@ -75,7 +75,27 @@ const getAllUsers = catchAsync(
   }
 );
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const updateUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  const userId = req.params.id;
+  // from global interface
+  const verifiedToken = req.user
+  // const token = req.headers.authorization;
+  // const verifiedToken =  verifyToken(token as string, envVars.JWT_SECRET) as JwtPayload
+  const payload = req.body;
+
+  const user = await userServices.updateUser(userId, payload, verifiedToken);
+
+  sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.CREATED,
+      message: "User Updated successfully",
+      data: user,
+    });
+})
+
 export const userController = {
   createUser,
   getAllUsers,
+  updateUser
 };
