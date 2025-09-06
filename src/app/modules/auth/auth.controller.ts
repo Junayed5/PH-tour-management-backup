@@ -18,7 +18,23 @@ const credentialsLogin = catchAsync(
     });
   }
 );
+const getNewAccessToken = catchAsync(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async (req: Request, res: Response, next: NextFunction) => {
+    // const result = await userServices.getUsers();
+    const token = req.headers.authorization;
+    const tokenInfo = await AuthServices.getNewAccessToken(token as string)
+
+   sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "User Logged in successfully",
+      data: tokenInfo
+    });
+  }
+);
 
 export const AuthController = {
-    credentialsLogin
+    credentialsLogin,
+    getNewAccessToken
 }

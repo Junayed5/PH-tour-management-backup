@@ -11,6 +11,8 @@ interface EnvConfig {
   JWT_SECRET: string;
   SUPER_ADMIN_EMAIL: string;
   SUPER_ADMIN_PASSWORD: string;
+  JWT_REFRESH_EXPIRY: string;
+  JWT_REFRESH_SECRET: string;
 }
 
 const loadEnvVarialbles = (): EnvConfig => {
@@ -23,6 +25,8 @@ const loadEnvVarialbles = (): EnvConfig => {
     "JWT_SECRET",
     "SUPER_ADMIN_EMAIL",
     "SUPER_ADMIN_PASSWORD",
+    "JWT_REFRESH_EXPIRY",
+    "JWT_REFRESH_EXPIRY"
   ];
 
   requireEnvVarialble.forEach((key) => {
@@ -41,6 +45,8 @@ const loadEnvVarialbles = (): EnvConfig => {
     BCRYPT_SALT_ROUNDS: process.env.BCRYPT_SALT_ROUNDS as string,
     SUPER_ADMIN_EMAIL: process.env.SUPER_ADMIN_EMAIL as string,
     SUPER_ADMIN_PASSWORD: process.env.SUPER_ADMIN_PASSWORD as string,
+    JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET as string,
+    JWT_REFRESH_EXPIRY: process.env.JWT_REFRESH_EXPIRY as string,
   };
 };
 
