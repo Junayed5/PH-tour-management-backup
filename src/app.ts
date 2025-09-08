@@ -5,6 +5,7 @@ import { globalError } from "./app/middleware/globalErrorHandler";
 import { notFound } from "./app/middleware/notFound";
 import cookieParser from 'cookie-parser'
 import passport from "passport";
+import './app/config/passport'
 // import httpStatus from 'http-status-codes'
 import expressSession from 'express-session'
 
