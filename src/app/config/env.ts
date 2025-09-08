@@ -13,6 +13,11 @@ interface EnvConfig {
   SUPER_ADMIN_PASSWORD: string;
   JWT_REFRESH_EXPIRY: string;
   JWT_REFRESH_SECRET: string;
+  GOOGLE_CLIENT_ID: string;
+  GOOGLE_CLIENT_SECRET: string;
+  GOOGLE_CALLBACK_URL: string;
+  EXPRESS_SESSION_SECRET: string;
+  FRONTEND_URL: string;
 }
 
 const loadEnvVarialbles = (): EnvConfig => {
@@ -26,7 +31,12 @@ const loadEnvVarialbles = (): EnvConfig => {
     "SUPER_ADMIN_EMAIL",
     "SUPER_ADMIN_PASSWORD",
     "JWT_REFRESH_EXPIRY",
-    "JWT_REFRESH_EXPIRY"
+    "JWT_REFRESH_EXPIRY",
+    "GOOGLE_CLIENT_ID",
+    "GOOGLE_CLIENT_SECRET",
+    "GOOGLE_CALLBACK_URL",
+    "FRONTEND_URL",
+    "EXPRESS_SESSION_SECRET",
   ];
 
   requireEnvVarialble.forEach((key) => {
@@ -47,6 +57,11 @@ const loadEnvVarialbles = (): EnvConfig => {
     SUPER_ADMIN_PASSWORD: process.env.SUPER_ADMIN_PASSWORD as string,
     JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET as string,
     JWT_REFRESH_EXPIRY: process.env.JWT_REFRESH_EXPIRY as string,
+    GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID as string,
+    GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET as string,
+    GOOGLE_CALLBACK_URL: process.env.GOOGLE_CALLBACK_URL as string,
+    FRONTEND_URL: process.env.FRONTEND_URL as string,
+    EXPRESS_SESSION_SECRET: process.env.EXPRESS_SESSION_SECRET as string,
   };
 };
 

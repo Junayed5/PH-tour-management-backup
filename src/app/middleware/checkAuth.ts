@@ -1,9 +1,12 @@
+/* eslint-disable no-console */
 import { NextFunction, Request, Response } from "express";
-import { Role } from "../modules/user/user.interface";
+import { IsActive, Role } from "../modules/user/user.interface";
 import { JwtPayload } from "jsonwebtoken";
 import { envVars } from "../config/env";
 import { verifyToken } from "../utils/jwt";
 import AppError from "../erroHelpers/AppError";
+import { User } from "../modules/user/user.model";
+import httpStatus from 'http-status-codes'
 
 export const checkAuth = (... authRole : Role[]) => async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -20,7 +23,21 @@ export const checkAuth = (... authRole : Role[]) => async (req: Request, res: Re
     //   throw new AppError(403, "You are not accessible to heat this route")
     // }
 
-    // console.log(verifiedToken)
+    // console.log(verifiedToken) 
+
+    const isUserExist = await User.findOne({ email: verifiedToken.email });
+
+    if (!isUserExist) {
+      throw new AppError(httpStatus.BAD_REQUEST, "User does not exist");
+    }
+
+    if (isUserExist.isActive === IsActive.BLOCKED || isUserExist.isDeleted === IsActive.INACTIVE) {
+      throw new AppError(httpStatus.BAD_REQUEST, `User ${isUserExist.isActive}`);
+    }
+    if (isUserExist.isDeleted) {
+      throw new AppError(httpStatus.BAD_REQUEST, "User is deleted");
+    }
+
     if (!authRole.includes(verifiedToken.role)) {
       throw new AppError(403, "You are not accessible to heat this route")
     }
@@ -28,6 +45,7 @@ export const checkAuth = (... authRole : Role[]) => async (req: Request, res: Re
     next()
 
   } catch (error) {
+    console.log("jwt err", error)
     next(error)
   }
 }
