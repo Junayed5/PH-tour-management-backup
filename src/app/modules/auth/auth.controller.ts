@@ -8,12 +8,14 @@ import createUserToken from "../../utils/userTokens";
 import AppError from "../../erroHelpers/AppError";
 import { envVars } from "../../config/env";
 import { JwtPayload } from "jsonwebtoken";
+import passport from "passport";
 
 const credentialsLogin = catchAsync(
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
   async (req: Request, res: Response, next: NextFunction) => {
     // const result = await userServices.getUsers();
-    const loginInfo = await AuthServices.credentialsLogin(req.body);
+    //login by mongo --->
+    // const loginInfo = await AuthServices.credentialsLogin(req.body);
 
     // res.cookie("refreshToken", loginInfo.refreshToken, {
     //   httpOnly: true,
@@ -24,13 +26,39 @@ const credentialsLogin = catchAsync(
     //   httpOnly: true,
     //   secure: false,
     // })
-    setCookies(res, loginInfo);
-    sendResponse(res, {
-      success: true,
-      statusCode: httpStatus.OK,
-      message: "User Logged in successfully",
-      data: loginInfo,
-    });
+    // login end by mongo --->
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    passport.authenticate("local", async (err: any, user: any, info: any) => {
+      if (err) {
+        return next(err);
+      }
+
+      if (!user) {
+        // return new AppError(401, "User does not found");
+        return next(new AppError(401, info.message))
+      }
+
+      const userToken = createUserToken(user);
+
+      //send data without passport
+      // delete user.toObject().password
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const {password: pass, ...rest} = user.toObject()
+
+      setCookies(res, userToken);
+      sendResponse(res, {
+        success: true,
+        statusCode: httpStatus.OK,
+        message: "User Logged in successfully",
+        data: {
+          accessToken : userToken.accessToken,
+          refreshToken : userToken.refreshToken,
+          user : rest
+        },
+      });
+    })(req, res, next);
   }
 );
 const getNewAccessToken = catchAsync(
@@ -60,7 +88,11 @@ const resetPassword = catchAsync(
     const newPassword = req.body.newPassword;
     const decodedToken = req.user;
 
-    await AuthServices.resetPassword(oldPassword, newPassword, decodedToken as JwtPayload);
+    await AuthServices.resetPassword(
+      oldPassword,
+      newPassword,
+      decodedToken as JwtPayload
+    );
 
     sendResponse(res, {
       success: true,
@@ -73,20 +105,19 @@ const resetPassword = catchAsync(
 const googleController = catchAsync(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async (req: Request, res: Response, next: NextFunction) => {
-
-    let redirect = req.query.state ? req.query.state as string : "";
+    let redirect = req.query.state ? (req.query.state as string) : "";
 
     if (redirect.startsWith("/")) {
-      redirect = redirect.slice(1)
+      redirect = redirect.slice(1);
     }
 
     const user = req.user;
 
     if (!user) {
-      throw new AppError(httpStatus.NOT_FOUND, "User not found")
+      throw new AppError(httpStatus.NOT_FOUND, "User not found");
     }
 
-    const tokenInfo =  createUserToken(user); 
+    const tokenInfo = createUserToken(user);
 
     setCookies(res, tokenInfo);
 
@@ -100,12 +131,12 @@ const logout = catchAsync(
       httpOnly: true,
       secure: false,
       sameSite: false,
-    })
+    });
     res.clearCookie("refreshToken", {
       httpOnly: true,
       secure: false,
       sameSite: false,
-    })
+    });
 
     sendResponse(res, {
       success: true,
@@ -121,5 +152,5 @@ export const AuthController = {
   getNewAccessToken,
   logout,
   resetPassword,
-  googleController
+  googleController,
 };

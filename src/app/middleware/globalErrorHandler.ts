@@ -11,9 +11,17 @@ export const globalError = (
   next: NextFunction
 ) => {
   let statusCode = 500;
-  let message = `Something Went Wrong!! ${err.message} global`;
+  let message = `Something Went Wrong!!`;
 
-  if (err instanceof AppError) {
+  if (err.code === 11000) {
+    const duplicate = err.message.match(/"([^"]*)"/)
+    statusCode = 400
+    message = `${duplicate[1]} already exist`
+  }else if (err.name === "CastError") {
+    statusCode = 400;
+    message = "Invalid Mongo Id provided"
+  }
+    else if (err instanceof AppError) {
     statusCode = err.statusCode;
     message = `${err.message}`;
   } else if (err instanceof Error) {
